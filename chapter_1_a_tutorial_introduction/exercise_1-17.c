@@ -7,17 +7,16 @@ than 80 characters. */
 
 #include <stdio.h>
 
-#define EXPECTED_CHARS 10
 
 int main(void)
 {
   int i, c, copy_chars;
-  int chars[EXPECTED_CHARS + 1];
-
+  int expected_chars = 10;
+  int chars[expected_chars + 1];
   i = c = 0;
 
   /* Inititalize array */
-  for (i = 0; i <= EXPECTED_CHARS; i++)
+  for (i = 0; i <= expected_chars; i++)
     chars[i] = 0;
 
   /* Read input */
@@ -28,7 +27,8 @@ int main(void)
     i++;
   }
 
-  for (i = 0; i <= EXPECTED_CHARS + 1; i++)
+  /* Print array */
+  for (i = 0; i <= expected_chars + 1; i++)
     printf("%c", chars[i]);
 
   return 0;
