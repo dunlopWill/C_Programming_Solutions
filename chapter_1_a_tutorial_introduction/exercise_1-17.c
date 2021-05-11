@@ -7,17 +7,19 @@ than 80 characters. */
 
 #include <stdio.h>
 
+#define STEP 5
 
 int main(void)
 {
-  int i, c, copy_chars;
+  int i, j, c;
   int expected_chars = 10;
   int chars[expected_chars + 1];
-  i = c = 0;
+  i = j = c = 0;
 
   /* Inititalize array */
   for (i = 0; i <= expected_chars; i++)
     chars[i] = 0;
+  chars[expected_chars+1] = '\0';
 
   /* Read input */
   i = 0;
@@ -25,6 +27,27 @@ int main(void)
   {
     chars[i] = c;
     i++;
+
+    /* Handle more characters than expected by copying into a bigger array */
+    int copy_chars[expected_chars + 1 + STEP];
+    if (i == expected_chars)
+    {
+      for (j = 0; j <= expected_chars; j++)
+      {
+        copy_chars[j] = chars[j];
+      }
+      expected_chars = expected_chars + STEP;
+      chars[expected_chars+1] = chars[expected_chars + 1];
+      /* Inititalize array */
+      for (i = 0; i <= expected_chars; i++)
+        chars[i] = 0;
+      chars[expected_chars + 1] = '\0';
+      for (j = 0; j <= expected_chars && copy_chars[j] != '\0'; j++)
+      {
+        chars[j] = copy_chars[j];
+      }
+
+    }
   }
 
   /* Print array */
