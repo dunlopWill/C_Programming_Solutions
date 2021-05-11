@@ -19,36 +19,17 @@ int main(void)
   /* Inititalize array */
   for (i = 0; i <= expected_chars; i++)
     chars[i] = 0;
-  chars[expected_chars+1] = '\0';
+  /* Make last character '\0' */
+  chars[expected_chars + 1] = '\0';
 
   /* Read input */
-  i = 0;
-  while ((c = getchar()) != EOF)
+  printf("Please type something and then click Ctrl+D.\n");
+  for (i = 0; (c = getchar()) != EOF; i++)
   {
-    chars[i] = c;
-    i++;
+    /* add stuff here */
 
-    /* Handle more characters than expected by copying into a bigger array */
-    int copy_chars[expected_chars + 1 + STEP];
-    if (i == expected_chars)
-    {
-      for (j = 0; j <= expected_chars; j++)
-      {
-        copy_chars[j] = chars[j];
-      }
-      expected_chars = expected_chars + STEP;
-      chars[expected_chars+1] = chars[expected_chars + 1];
-      /* Inititalize array */
-      for (i = 0; i <= expected_chars; i++)
-        chars[i] = 0;
-      chars[expected_chars + 1] = '\0';
-      for (j = 0; j <= expected_chars && copy_chars[j] != '\0'; j++)
-      {
-        chars[j] = copy_chars[j];
-      }
-
-    }
   }
+
 
   /* Print array */
   for (i = 0; i <= expected_chars + 1; i++)
