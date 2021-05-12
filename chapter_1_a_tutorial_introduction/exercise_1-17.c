@@ -7,7 +7,7 @@ than 80 characters. */
 
 #include <stdio.h>
 
-#define STEP 5
+#define MAX_CHARS
 
 int main(void)
 {
