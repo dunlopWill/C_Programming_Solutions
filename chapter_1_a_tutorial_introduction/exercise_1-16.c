@@ -3,7 +3,7 @@ will correctly print the length of arbitrarily long input lines, and as much
 as possible of the text. */
 
 #include <stdio.h>
-#define MAXLINE 1000 /* maxium input line size */
+#define MAXLINE 10 /* maxium input line size */
 
 int my_getline(char line[], int maxline);
 void copy(char to[], char from[]);
@@ -16,16 +16,45 @@ int main(void)
     char line[MAXLINE]; /* current input line */
     char longest[MAXLINE]; /* longest line saved here */
 
-    max = 0;
+    int prev_max, get_more;
+    char temp[MAXLINE];
+
+    max = prev_max = get_more = 0;
     while ((len = my_getline(line, MAXLINE)) > 0)
-      if (len > max)
+    {
+      if (line[len - 1] != '\n')
       {
-        max = len;
-        copy(longest, line);
+        if (get_more == 0)
+          copy(temp, line);
+        prev_max += len;
+        if (max < prev_max)
+          max = prev_max;
+        get_more = 1;
       }
+      else
+      {
+        if (get_more == 1)
+        {
+          if (max < prev_max + len)
+          {
+            max = prev_max + len;
+            copy(longest, temp);
+            longest[MAXLINE - 2] = '\n';
+          }
+          get_more = 0;
+        }
+        else if (len > max)
+        {
+          max = len;
+          copy(longest, line);
+        }
+        prev_max = 0;
+      }
+    }
+
     if (max > 0) /* there was a line */
       printf("%s", longest);
-    
+
     return 0;
 }
 
@@ -39,6 +68,11 @@ int my_getline(char s[], int lim)
   if (c == '\n')
   {
     s[i] = c;
+    i++;
+  }
+  else if (c == EOF && i > 0)
+  {
+    s[i] = '\n';
     i++;
   }
   s[i] = '\0';
