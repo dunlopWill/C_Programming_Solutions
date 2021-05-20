@@ -1,93 +1,87 @@
 /* Exercise 1-17.c. Write a program to print all input lines that are longer
 than 80 characters. */
 
-/* 1. Obtain Input
-   2. Read characters into array (i.e. all characters + 1 because '\0')
-   3. If use every bit of array, create a new array and copy characters into the new array */
+/* 1. Get all input into one large array */
+/* 2. Iterate through array, when find '\n' update length */
+/* 3. If length exceeds target, copy into temp and print */
 
 #include <stdio.h>
-#define MAXLINE 10 /* maxium input line size */
+#define MAX_INPUT 1000 /* maxium input of characters size */
+#define TARGET_LENGTH 80 /* print all input lines longer than this number of characters */
 
-int my_getline(char line[], int maxline);
-void copy(char to[], char from[]);
+int input_length(char all_input[]); /* Return length of input including newline characters */
+void print_line(char all_input[], int start_positition, int finish_position);
+int establish_line_length(char all_input[], int input_length, int target_length, int start_positition);
 
 /* print longest input line */
 int main(void)
 {
-    int len; /* current line length */
+    int c, length, start_positition, finish_position;
     int max; /* maximum length seen so far */
-    char line[MAXLINE]; /* current input line */
-    char longest[MAXLINE]; /* longest line saved here */
+    char all_input[MAX_INPUT]; /* current input*/
 
-    int prev_max, get_more;
-    char temp[MAXLINE];
+    int i = 0;
 
-    max = prev_max = get_more = 0;
-    while ((len = my_getline(line, MAXLINE)) > 0)
+    printf("Please input up to %d characters and then click Ctrl+D\n", (MAX_INPUT - 1));
+    while ((c = getchar()) != EOF)
     {
-      if (line[len - 1] != '\n')
-      {
-        if (get_more == 0)
-          copy(temp, line);
-        prev_max += len;
-        if (max < prev_max)
-          max = prev_max;
-        get_more = 1;
-      }
-      else
-      {
-        if (get_more == 1)
-        {
-          if (max < prev_max + len)
-          {
-            max = prev_max + len;
-            copy(longest, temp);
-            longest[MAXLINE - 2] = '\n';
-          }
-          get_more = 0;
-        }
-        else if (len > max)
-        {
-          max = len;
-          copy(longest, line);
-        }
-        prev_max = 0;
-      }
+      all_input[i] = c;
+      i++;
     }
 
-    if (max > 0) /* there was a line */
-      printf("%s", longest);
+    if (i >= MAX_INPUT)
+      printf("Max number of characters exceeded.\n");
+
+    length = input_length(all_input);
+
+    if (length > 0)
+    {
+      start_positition = 0;
+      while (start_positition <= length)
+      {
+      finish_position = establish_line_length(all_input, length, TARGET_LENGTH, start_positition);
+
+      if ((finish_position - start_positition) >= TARGET_LENGTH)
+        print_line(all_input, start_positition, finish_position);
+
+      start_positition = finish_position + 2;
+      }
+    }
 
     return 0;
 }
 
-/*getline: read a line into s, return length */
-int my_getline(char s[], int lim)
-{
-  int c, i;
-
-  for (i=0; i<lim-1 && (c = getchar()) != EOF && c != '\n'; i++)
-    s[i] = c;
-  if (c == '\n')
-  {
-    s[i] = c;
-    i++;
-  }
-  else if (c == EOF && i > 0)
-  {
-    s[i] = '\n';
-    i++;
-  }
-  s[i] = '\0';
-  return i;
-}
-
-/* copy: copy 'from' into 'to'; assume to is big enough */
-void copy(char to[], char from[])
+int input_length(char all_input[])
 {
   int i;
 
-  i = 0;
-  while ((to[i] = from[i]) != '\0')
+  while (all_input[i] != '\0')
     i++;
+
+  return i;
+}
+
+int establish_line_length(char all_input[], int input_length, int target_length, int start_positition)
+{
+  int i;
+  int temp_line[input_length];
+  int finish_position;
+
+  for (i = start_positition; i <= input_length; i++)
+  {
+    if (all_input[i] == '\n' || all_input[i] == '\0')
+    {
+        finish_position = i - 1;
+        return finish_position;
+    }
+  }
+  return 0;
+}
+
+void print_line(char all_input[], int start_positition, int finish_position)
+{
+  int i;
+  for (i = start_positition; i <= finish_position; i++)
+    printf("%c", all_input[i]);
+  printf("\n");
 }
