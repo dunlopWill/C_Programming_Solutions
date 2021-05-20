@@ -6,34 +6,88 @@ than 80 characters. */
    3. If use every bit of array, create a new array and copy characters into the new array */
 
 #include <stdio.h>
+#define MAXLINE 10 /* maxium input line size */
 
-#define MAX_CHARS
+int my_getline(char line[], int maxline);
+void copy(char to[], char from[]);
 
+/* print longest input line */
 int main(void)
 {
-  int i, j, c;
-  int expected_chars = 10;
-  int chars[expected_chars + 1];
-  i = j = c = 0;
+    int len; /* current line length */
+    int max; /* maximum length seen so far */
+    char line[MAXLINE]; /* current input line */
+    char longest[MAXLINE]; /* longest line saved here */
 
-  /* Inititalize array */
-  for (i = 0; i <= expected_chars; i++)
-    chars[i] = 0;
-  /* Make last character '\0' */
-  chars[expected_chars + 1] = '\0';
+    int prev_max, get_more;
+    char temp[MAXLINE];
 
-  /* Read input */
-  printf("Please type something and then click Ctrl+D.\n");
-  for (i = 0; (c = getchar()) != EOF; i++)
+    max = prev_max = get_more = 0;
+    while ((len = my_getline(line, MAXLINE)) > 0)
+    {
+      if (line[len - 1] != '\n')
+      {
+        if (get_more == 0)
+          copy(temp, line);
+        prev_max += len;
+        if (max < prev_max)
+          max = prev_max;
+        get_more = 1;
+      }
+      else
+      {
+        if (get_more == 1)
+        {
+          if (max < prev_max + len)
+          {
+            max = prev_max + len;
+            copy(longest, temp);
+            longest[MAXLINE - 2] = '\n';
+          }
+          get_more = 0;
+        }
+        else if (len > max)
+        {
+          max = len;
+          copy(longest, line);
+        }
+        prev_max = 0;
+      }
+    }
+
+    if (max > 0) /* there was a line */
+      printf("%s", longest);
+
+    return 0;
+}
+
+/*getline: read a line into s, return length */
+int my_getline(char s[], int lim)
+{
+  int c, i;
+
+  for (i=0; i<lim-1 && (c = getchar()) != EOF && c != '\n'; i++)
+    s[i] = c;
+  if (c == '\n')
   {
-    /* add stuff here */
-
+    s[i] = c;
+    i++;
   }
+  else if (c == EOF && i > 0)
+  {
+    s[i] = '\n';
+    i++;
+  }
+  s[i] = '\0';
+  return i;
+}
 
+/* copy: copy 'from' into 'to'; assume to is big enough */
+void copy(char to[], char from[])
+{
+  int i;
 
-  /* Print array */
-  for (i = 0; i <= expected_chars + 1; i++)
-    printf("%c", chars[i]);
-
-  return 0;
+  i = 0;
+  while ((to[i] = from[i]) != '\0')
+    i++;
 }
