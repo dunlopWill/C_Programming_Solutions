@@ -1,9 +1,14 @@
-/* Exercise 1-17.c. Write a program to print all input lines that are longer
-than 80 characters. */
+/* Exercise 1-18.c. Write a program to remove trailing blanks and tabs from
+each line of input, and to detlete entirely blank lines */
 
-/* 1. Get all input into one large array */
-/* 2. Iterate through array, when find '\n' update length */
-/* 3. If length exceeds target, copy into temp and print */
+/*
+1. Get all input and copy into an array
+2. While copying, if character is a blank (' ') and subsequent is newline ('\n')
+then overwrite the blank with the '\n'.
+3. If character is a tab '\t', then do not copy into array.
+4. If character is '\n' and all subsequent characters are ' ' or '\t' until
+next '\n' then do not copy into array
+*/
 
 #include <stdio.h>
 #define MAX_INPUT 1000 /* maxium input of characters size */
