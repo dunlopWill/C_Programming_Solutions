@@ -5,17 +5,15 @@ from each line of input, and delete entirely blank lines. */
 #define MAX_INPUT 1000 /* maxium input of characters size */
 
 int input_length(char all_input[]); /* Return length of input including newline characters */
-void print_input(char all_input[]);
 int end_of_line(char all_input[], int start_positition);
 int line_wo_blanks(char all_input[], int start_positition, int end);
 
 int main(void)
 {
-    int c, i, j,length, count, start_position, finish_position, amount_to_copy, leave_loop;
-    char all_input[MAX_INPUT], cleaned_input[MAX_INPUT]; /* current input*/
+    int c, i, length, start_position, finish_position;
+    char all_input[MAX_INPUT]; /* current input*/
 
-    i = j = leave_loop = 0;
-    count = 1;
+    i = 0;
 
     /* Get input */
     printf("Please input up to %d characters and then click Ctrl+D\n", (MAX_INPUT - 1));
@@ -28,7 +26,6 @@ int main(void)
         printf("Max number of characters exceeded.\n");
     }
 
-
     length = input_length(all_input);
 
     if (length > 0)
@@ -40,18 +37,16 @@ int main(void)
       finish_position = line_wo_blanks(all_input, start_position, end_of_line(all_input, start_position));
 
       for (i = start_position; i <= finish_position; i++)
+      {
         printf("%c", all_input[i]);
-        count++;
+      }
       printf("\n");
-      count++;
 
       start_position = end_of_line(all_input, start_position) + 1;
       while (all_input[start_position] == '\n')
         start_position++;
       }
     }
-
-    printf("input was originally %d\ncleaned input is %d", length, count);
 
     return 0;
 }
