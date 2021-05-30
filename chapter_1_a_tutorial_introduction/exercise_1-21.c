@@ -11,73 +11,140 @@ would suffice to reach a tab stop, which should be given preference? */
 #define REPLACE_W_TAB '%' /* Replace with this character e.g. space */
 
 /*
-1. Read all input into an array.
-2. If a space character is followed by another, increment counter.
 3. If counter <8, print spaces. While >= 8, print a tab and -8 from counter.
    Then print remaining spaces.
 4. Else print characters.
 */
 
+int get_input(char char_array[]);
+void copy_array(char to[], char from[], int to_position, int from_position);
+void print_array(char array_of_characters[], int start_position, int finish_position);
+int get_new_word_start(char s[], int last_word_end);
+int get_word_end(char s[], int start_position);
+int count_char_frequency(char s[], int word_end, int word_start, char specified_char);
+
 int main(void)
 {
-  char s[1000];
-  int c, i, length, space_counter, j;
+  int i, c, length, start_of_word, end_of_word, array_position, spaces, tabs, new_lines;
+  char inputted_chars[MAX_INPUT];
 
-  i = length = space_counter = j = 0;
+  i = start_of_word = end_of_word = array_position = 0;
 
-  while ((c = getchar()) != EOF)
+  length = get_input(inputted_chars);
+  inputted_chars[length + 1] = '\0'; /* Signify end of input */
+
+  while(array_position <= length)
   {
-    s[i] = c;
-    i++;
+    if (inputted_chars[array_position] == ' ' || inputted_chars[array_position] == '\t')
+    {
+      printf("registered\n");
+      spaces = count_char_frequency(inputted_chars, array_position, get_new_word_start(inputted_chars, array_position), ' ');
+      tabs = count_char_frequency(inputted_chars, array_position, get_new_word_start(inputted_chars, array_position), '\t');
+
+      array_position = array_position + spaces + tabs - 1;
+
+      while (tabs > 0)
+      {
+        spaces = spaces + N_SPACES;
+        tabs--;
+      }
+
+      printf("%d", spaces);
+
+      while (spaces > 0)
+      {
+        if (spaces < N_SPACES)
+          for (i = 0; i <= spaces; i++)
+          {
+            printf("%c", REPLACE_W_SPACE);
+            spaces--;
+          }
+        else
+        {
+          printf("%c", REPLACE_W_TAB);
+          spaces = spaces - N_SPACES;
+        }
+      }
+
+    }
+    else
+    {
+      print_array(inputted_chars, array_position, get_word_end(inputted_chars, array_position));
+      array_position = get_word_end(inputted_chars, array_position);
+    }
+    
+    array_position++;
   }
 
-  length = i;
-
-  if (length > 0)
-    for (i = 0; i <= length; i++)
-    {
-      if (s[i] != ' ') /* More efficient to print tabs, so only consider spaces */
-      {
-        if (space_counter > 0)
-        {
-          if (space_counter == 1)
-            printf("%c", REPLACE_W_SPACE);
-          else if (space_counter < N_SPACES)
-          {
-            j = space_counter;
-            while (j < space_counter)
-            {
-              printf("%c", REPLACE_W_SPACE);
-              j++;
-            }
-          }
-          else if (space_counter >= N_SPACES)
-          {
-            while (space_counter >= N_SPACES)
-            {
-              printf("%c", REPLACE_W_TAB);
-              space_counter = space_counter - N_SPACES;
-            }
-            if (space_counter < N_SPACES)
-            {
-              j = space_counter;
-              while (j < space_counter)
-              {
-                printf("%c", REPLACE_W_SPACE);
-                j++;
-              }
-            }
-          }
-        }
-        /* Then print the non space character regardless */
-        printf("%c", s[i]);
-        space_counter = 0; /* and reset the counter */
-      }
-      else
-      {
-        space_counter++;
-      }
-    }
 
   return 0;
+}
+
+/* Function to take input and allocate characters into array;
+   also returns length of input */
+int get_input(char array_for_characters[])
+{
+  int i, c, length_of_input;
+  i = 0;
+  while ((c = getchar()) != EOF)
+  {
+    array_for_characters[i] = c;
+    i++;
+  }
+  array_for_characters[i+1] = '\0'; /* make easy to find end of input */
+  length_of_input = i + 1;
+  return length_of_input;
+}
+
+/* Copy from one array in to another */
+void copy_array(char to[], char from[], int to_position, int from_position)
+{
+  to[to_position] = from[from_position];
+}
+
+/* Function that prints each character within a given array from a starting
+position to a finish position */
+void print_array(char array_of_characters[], int start_position, int finish_position)
+{
+  int i;
+
+  for (i = start_position; i <= finish_position; i++)
+    printf("%c", array_of_characters[i]);
+}
+
+/* Function that returns start of new word position */
+int get_new_word_start(char s[], int last_word_end)
+{
+  int i;
+  i = last_word_end;
+
+  while (s[i] == ' ' || s[i] == '\t' || s[i] == '\0')
+    i++;
+
+  return i;
+}
+
+/* Function that returns end of word position */
+int get_word_end(char s[], int start_position)
+{
+  int i;
+  i = start_position;
+
+  while (s[i] != ' ' && s[i] != '\t' && s[i] != '\0')
+    i++;
+
+  return i;
+}
+
+/* Function that returns frequency of a specified character between two points */
+int count_char_frequency(char s[], int start_pos, int end_pos, char specified_char)
+{
+  int i, number_of_specified_char;
+  number_of_specified_char = 0;
+  for (i = start_pos; i <= end_pos; i++)
+  {
+    if (s[i] == specified_char)
+      number_of_specified_char++;
+  }
+  return number_of_specified_char;
 }
